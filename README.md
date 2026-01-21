@@ -116,7 +116,7 @@ Although some linked electronic health records available in the version 19 data 
 
 c\) Flags patients who should be excluded from analysis cohort based on genetic QC thresholds, data discrepancies between NCRAS and GEL data, retrospective tumour biopsies, missing essential covariates or VTE prior to study entry.
 
-d\) identifies sub-cohorts for sensitivity analyses including `new_untreated_cancer` column: participants who had tumour biopsied for WGS within 42 days of initial cancer diagnosis [and]{.underline} did not have any SACT before study entry; `prior_anticoag_indication` column flags participants with a medical indication for anticoagulation before study entry (see supplementary table for list of relevant ICD10 codes; to pull these from Labkey use script `anticoag_indications.R`
+d\) identifies sub-cohorts for sensitivity analyses including `new_untreated_cancer` column: participants who had tumour biopsied for WGS within 42 days of initial cancer diagnosis and did not have any SACT before study entry; `prior_anticoag_indication` column flags participants with a medical indication for anticoagulation before study entry (see supplementary table for list of relevant ICD10 codes; to pull these from Labkey use script `anticoag_indications.R`
 
 e\) Creates a table of values which can be used for **STROBE flow diagram** showing how analysis cohort was derived. See Figure 1 of manuscript.
 
@@ -157,7 +157,7 @@ source('cohort_demographics.R')
 
 # 6. Somatic mutations
 
-Small variants were extracted from the cancer_tier_and_domain_variants table as described here: <https://re-docs.genomicsengland.co.uk/cancer_tiering/>. Large variants (including Indels/translocations/inversion \> 50bp are extracted from GEL JSON files which can be queried using the GEL R package: `getSVCNVperGene` as described here: <https://re-docs.genomicsengland.co.uk/somatic_sv/>. The JSON files are created from the NSv4 delivery which used Manta v0.28; the raw output has been filtered by an internal GEL tiering pipeline which annotates variants likely to impact transcript function. In the scripts below I query all protein coding genes in ensembl (\>17,000 genes in output)
+Small variants were extracted from the cancer_tier_and_domain_variants table as described here: <https://re-docs.genomicsengland.co.uk/cancer_tiering/>. Large variants (including Indels/translocations/inversion \> 50bp are extracted from GEL JSON files which can be queried using the GEL R package: `getSVCNVperGene` as described here: <https://re-docs.genomicsengland.co.uk/somatic_sv/>. The scripts below query all protein coding genes in ensembl (\>17,000 genes in output)
 
 ```{r}
 source('cancer_tiered_variants_extract.R')
