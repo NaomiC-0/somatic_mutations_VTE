@@ -112,9 +112,7 @@ a\) Loads the relevant tables created in steps 1-3 and merges into single df
 
 b\) Creates status and time_to_status columns:
 
-Although some linked electronic health records available in the version 19 data release run until 2024, the latest date for treatment records is August 2022. Therefore we censored participants at 5 years from study entry, or on 31/7/2022 (whichever came soonest) as this is the latest date when all linked health data can reasonably be assumed to be complete.
-
-One limitation of time to event modelling using HES data to note: for inpatient VTE diagnosis, the date in hes_apc reflects the date of admission during which the VTE occurred. This might not always be the exact date of the VTE
+Although some linked electronic health records available in the version 19 data release run until 2024, the latest date for treatment records is August 2022. Therefore we censored participants at 5 years from study entry, or on 31/7/2022 (whichever came soonest) as this is the latest date when all linked health data can reasonably be assumed to be complete. For inpatient VTE diagnosis, the date in hes_apc reflects the date of admission during which the VTE occurred. 
 
 c\) Flags patients who should be excluded from analysis cohort based on genetic QC thresholds, data discrepancies between NCRAS and GEL data, retrospective tumour biopsies, missing essential covariates or VTE prior to study entry.
 
