@@ -281,15 +281,15 @@ These scripts run the main (primary) mininally-adjusted analyses, fully adjusted
 ```{r}
 # Clinical #####
 # inputs
-# analysis cohort dataframe: see ./scripts/format_analysis_cohort.R
+# analysis cohort dataframe: see format_analysis_cohort.R
 source('coxmodels_clinical.R')
 # outputs
 # './results/cox_clinical_univar.tsv' -> supplementary table 4
 
 # Genes #######
 # inputs
-# analysis cohort dataframe. see ./scripts/format_analysis_cohort.R
-# gene list. see ./scripts/gene_list.R
+# analysis cohort dataframe. see format_analysis_cohort.R
+# gene list: see gene_list.R
 # combined variants file: see section under somatic mutations
 source('coxmodels_genes.R')
 # outputs
@@ -304,8 +304,8 @@ source('coxmodels_genes.R')
 
 # TMB #######
 # inputs
-# analysis cohort dataframe:  see ./scripts/format_analysis_cohort.R
-# tmb/signatures file: see scripts/get_TMB.R
+# analysis cohort dataframe:  see format_analysis_cohort.R
+# tmb/signatures file: see get_TMB.R
 source('coxmodels_TMB.R')
 # outputs
 #cox_TMB_minadj.tsv --> table 2 and figure 4 
@@ -320,8 +320,8 @@ source('coxmodels_TMB.R')
 
 #  mutational signatures #######
 # inputs
-# analysis cohort dataframe:  see ./scripts/format_analysis_cohort.R
-# tmb/signatures file: see scripts/get_TMB.R
+# analysis cohort dataframe:  see format_analysis_cohort.R
+# tmb/signatures file: see get_TMB.R
 source('coxmodels_signatures.R')
 # outputs
 #cox_signatures_minadj.tsv --> table 2 and figure 4 
@@ -336,7 +336,7 @@ source('coxmodels_signatures.R')
 
 # PRS and thrombophilia variants #####
 # inputs
-# analysis cohort dataframe:  see ./scripts/format_analysis_cohort.R
+# analysis cohort dataframe:  see format_analysis_cohort.R
 # germline genotypes for FVL and PTG20210A from AggV2: /klarin_SNP_germline_genotypes_all_cancer_analysis.txt
 # PRS scores for cohort: see plink_calculate_PRS.sh
 #./data/participant_PRS_scores_klarin.txt.sscore
@@ -355,11 +355,11 @@ source('coxmodels_PRS.R')
 
 ```{r}
 # inputs
-# analysis cohort dataframe. see ./scripts/format_analysis_cohort.R
-# gene list. see ./scripts/gene_list.R
+# analysis cohort dataframe. see format_analysis_cohort.R
+# gene list. see gene_list.R
 # combined variants file: see section under somatic mutations
-# tmb/signatures file: see scripts/get_TMB.R
-source('./scripts/cmprsk_regression.R')
+# tmb/signatures file: see get_TMB.R
+source('cmprsk_regression.R')
 # outputs
 # FG_genes_fulladj.tsv
 # FG_genes_minadj.tsv
@@ -372,4 +372,9 @@ source('./scripts/cmprsk_regression.R')
 #cuminc_plot_TP53.tsv
 #cuminc_plot_PCDH15.tsv
 
+```
+# Figures and tables
+Scripts to format figures and tables as they appear in the manuscript
+```{r}
+source('figures_and_tables.R'
 ```
