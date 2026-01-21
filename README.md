@@ -102,7 +102,7 @@ source('VTE_diagnoses_cancer.R')
 
 These scripts select the first recorded diagnosis of VTE from the hospital episode statistics including: admitted patient care records (hes_apc), A&E records (hes_ae and ecds) and outpatient records (hes_op).
 
-Censor dates are listed here: \[https://re-docs.genomicsengland.co.uk/release19/\]
+Censor dates are listed here: \[https://re-docs.genomicsengland.co.uk/release19]
 
 Since ecds records use SNOMED codes, the ICD10 codes were mapped to relevant SNOMED codes using the code lists provided by the GEMINI project: <https://github.com/GEMINI-multimorbidity.>
 
