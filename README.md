@@ -376,5 +376,5 @@ source('cmprsk_regression.R')
 # Figures and tables
 Scripts to format figures and tables as they appear in the manuscript
 ```{r}
-source('figures_and_tables.R'
+source('figures_and_tables.R')
 ```
