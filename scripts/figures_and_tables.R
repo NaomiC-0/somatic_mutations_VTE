@@ -339,8 +339,8 @@ plot_cum_inc <- function(surv_df, gene_name) {
   # now create the plot
   surv_df %>%
     mutate(cum_inc = surv, 
-           # I already inverted surv (to make it cuminc) whne creating surv_df
-           # but I forgot to do the same for the CIs therefore do it here
+           # surv was already inverted (to make it cuminc) when creating surv_df
+           # do the same for the CIs
            cum_inc_upper = 1 - lower,
            cum_inc_lower = 1 - upper) %>%
     ggplot(aes(x = time, y = cum_inc, color = strata, fill = strata)) +
@@ -404,8 +404,6 @@ rm(freqs, sample_sizes, pancan, sample_sizes2)
 stratified <- fread('cox_top_genes_tumour_stratified.tsv')
 df_plot <- stratified %>%
   left_join(., freqs2, by = c('gene', 'cancer')) %>%
-  # don't plot any cancers with less than 5 n_mutated
-  mutate(across(c(HR, l95ci, u95ci, pval), ~case_when(n_mutated < 5 ~ NA, .default = .))) %>%
   # remove the underscore from cancer names
 mutate(cancer = gsub('_', ' ', cancer),
        cancer = gsub('HEAD NECK', 'HEAD AND NECK', cancer),
@@ -489,7 +487,6 @@ df3 <- fread('cox_genes_time_stratified.tsv') %>%
   mutate(sensitivity_analysis = 'time-stratified') %>% dplyr::rename('gene' =term) %>%
   mutate(stratum = paste('year', time_point))
 # pancancer new untreated cancer (<42 days diagnosis to study entry)
-# this file has now been updated
 df4_all <- fread('cox_new_untreated_timezero_diag_genes.csv') %>%
   mutate(sensitivity_analysis = 'min.adj time from cancer diagnosis to VTE',
          stratum = 'delay < 42 days from diagnosis to study and no prior treatment') %>%
@@ -608,7 +605,7 @@ df6 <- fread('cox_TMB_ancestry_stratified.tsv') %>%
                              ancestry == 'South Asian' ~ 'South Asian ancestry only',
                              ancestry == 'East Asian' ~ 'East Asian ancestry only',
                              ancestry == 'American' ~ 'American ancestry only')) %>%
-  # for East Asians regression models did not convergedue to data sparsity so remove from the table,
+  # for East Asians regression models did not converge due to data sparsity so remove from the table,
   filter(stratum != 'East Asian ancestry only')
 # df7 ICI interactions
 df7 <- fread('cox_TMB_ICI_interactions.tsv') %>%
@@ -621,16 +618,8 @@ df7 <- fread('cox_TMB_ICI_interactions.tsv') %>%
 df8 <- fread('cox_TMB_tumour_stratified.tsv') %>%
   filter(str_detect(term, 'tmb_categories')|str_detect(term, 'tmb_binary_thresh20tmb_above_20')) %>%
   mutate(sensitivity_analysis = 'tumour-stratified') %>%
-  mutate(stratum = cancer) %>%
-  mutate(across(c(HR, l95ci, u95ci, pval), 
-                # for these cancer types, samples with tmb>20 were very rare (n < 5) and regression models did not converge
-                ~case_when(cancer == 'HEPATOPANCREATOBILIARY'|
-                             cancer == 'RENAL'|
-                             cancer == 'SARCOMA'|
-                             cancer == 'PROSTATE'|
-                             cancer == 'HEAD_NECK'|
-                             cancer == 'HAEM_ONC' ~ NA_real_, 
-                           .default = .)))
+  mutate(stratum = cancer) 
+
 # fine and gray
 df9 <- fread('FG_TMB_minadj.tsv') %>%
   mutate(sensitivity_analysis = 'Fine and Gray minimally adjusted model') %>%
@@ -658,7 +647,7 @@ df <- rbind(df1, df2, df7, df3, df4, df5, df6, df8, df9, df10, fill = T) %>%
   # otherwise the column has to be duplicated for each gene
   mutate(model_covars = gsub('tmb_binary_thresh20|tmb_categories|tmb_binary', 'TMB', model_covars),
          model_covars = gsub('pc1 \\+ pc2 \\+ pc3 \\+ pc4', 'pc1-4', model_covars),
-         # clen the term names
+         # clean the term names
          term = case_when(term == 'tmb_binary_thresh20tmb_above_20' ~ 'TMB>=20_binary',
                           term == 'tmb_categoriestmb_between_5_10' ~ 'TMB 5-9',
                           term == 'tmb_categoriestmb_between_10_20' ~ 'TMB 10-19',
@@ -681,7 +670,7 @@ df <- rbind(df1, df2, df7, df3, df4, df5, df6, df8, df9, df10, fill = T) %>%
 fwrite(df, 'TMB_sensitivity_analyses.csv', row.names = F)
 
 # Supp Figure 4 #####
-# Done inside GEL RE with raw data (box plot)
+# Done inside GEL RE (box plot)
 
 # Supp Figure 5 TMB leave one out analyses##########
 tmb_exclude_highTMB_cancers <- read.table('cox_TMB_exclude_highTMB_cancers.tsv')
@@ -823,7 +812,6 @@ df7 <- fread('cox_signature_ICI_interactions.tsv') %>%
 df8 <- fread('cox_signatures_tumour_stratified.tsv') %>%
   mutate(sensitivity_analysis = 'tumour-stratified') %>%
   mutate(stratum = cancer) %>%
-  # remove results for any cancers where n_sig < 5 as regression model too unstable to converge
   left_join(., freqs2, by = c('cancer', 'term')) %>% 
   mutate(across(c(HR, u95ci, l95ci, pval), ~case_when(n_sig < 5 ~ NA_real_,
                                                       .default = .))) %>%
@@ -876,14 +864,6 @@ df_new <- df %>%  pivot_wider(
           model_covars)
   
 fwrite(df_new, 'signature_sensitivity_analyses.csv', row.names = F)
-
-# have only included time stratified analyses. These results show the time dependent interaction term for TP53
-time_int <- fread('cox_signatures_time_interaction.tsv') 
-# no significant time interactions
-time_int %>% arrange(term) %>%
-  filter(pval<0.05)
-
-
 
 
 # Table 2 combined sig and TMB #####
@@ -1010,7 +990,7 @@ df_plot <- df %>% left_join(.,
                             by = c('term', 'cancer')) %>% 
   rbind(., df1, fill = T) %>%
   mutate(term = factor(term, levels = c('TMB', 'SBS6', 'SBS8', 'SBS19', 'SBS26'))) %>%
-  # if n_sig was < 5 in freqs then make the values NA because I don't want to plot them,
+  # if n_sig was < 5 in freqs convert to NA so counts cannot be derived
   mutate(across(c(median, q1, q3, min, max, percent), ~case_when(n_sig < 5 ~ NA_real_,
                                                                 .default = .)))
 rm(df, df1)
@@ -1101,7 +1081,7 @@ cancer_factor <- fread("cohortsummary_bystatus.tsv") %>%
 sigs_stratified <-fread('cox_signatures_tumour_stratified.tsv') %>%
   mutate(sensitivity_analysis = 'tumour-stratified') %>%
   mutate(stratum = cancer) %>%
-  # remove results for any cancers where n_sig < 5 as regression model likely too unstable
+  #  where n_sig < 5 convert to NA so low counts cannot be derived in line with GEL data rules
   left_join(., freqs2, by = c('cancer', 'term')) %>% 
   mutate(across(c(HR, u95ci, l95ci, pval), ~case_when(n_sig < 5 ~ NA_real_,
                                                       .default = .))) %>%
@@ -1139,12 +1119,10 @@ df_plot1 <- rbind(tmb_pancan, sigs_pancan,
                   fill =T) %>%
   mutate(term = gsub('signature_', 'SBS', term)) %>%
   mutate(cancer = factor(cancer, levels = cancer_factor),
-         # drop unused factor levels otherwise they still appear on graph
+         # drop unused factor levels 
          term = factor(term, levels = terms_to_plot)) %>%
   # Arrange by cancer and gene for consistent ordering
-  arrange(cancer, term) #%>%
-  # remove cancers which have no results at all for any of the TMB/sigs
- # group_by(cancer)  %>% filter(!all(is.na(HR))) %>% ungroup()
+  arrange(cancer, term) 
 
 p1 <- ggplot(df_plot1, aes(x = cancer, y = HR, color = term)) +
   geom_point(size = 3) +
