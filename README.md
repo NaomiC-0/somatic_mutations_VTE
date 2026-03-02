@@ -10,7 +10,7 @@ This code accompanies the manuscript titled:
 
 'Associations of tumour somatic mutations with cancer-associated venous thromboembolism'.
 
-DOI ....
+DOI [10.1016/j.jtha.2026.01.019](https://doi.org/10.1016/j.jtha.2026.01.019)
 
 All scripts have gone through the Genomics England (GEL) airlock approval process. Some scripts were adapted from training materials provided by GEL. See: <https://re-docs.genomicsengland.co.uk/tutorials/> and <https://re-docs.genomicsengland.co.uk/workflows/>
 
